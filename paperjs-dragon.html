@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dragon</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script type="text/javascript" src="paper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+
+        var Collideable = Base.extend({
+            initialize: function(position) {
+                this.position = position;
+                this.myCircle = new Path.Circle(new Point(this.position), 20);
+                this.myCircle.fillColor = 'white';
+                this.speed = [Math.random(1.0,5.0),Math.random(1.0,5.0)];
+                // this.speed = [2.0, 2.0];
+                this.direction = [1,1];
+                this.available = true;
+                this.leavingContact = false;
+            },
+            run: function() {
+                this.myCircle.position = this.position;
+                // this.moveAround();
+            },
+            move: function(position) {
+                this.position = position;
+            },
+            moveAround: function() {
+                var xPos = this.position.x;
+                var yPos = this.position.y;
+                var xSize = view.viewSize.width;
+                var ySize = view.viewSize.height;
+                this.position.x += (this.speed[0] * this.direction[0]);
+                this.position.y += (this.speed[1] * this.direction[1]);
+                // console.log(xSize + ", " + xPos);
+                if(xPos > xSize){ this.direction[0] = -1;} else if(xPos < 10){ this.direction[0] = 1;}
+                if(yPos > ySize){ this.direction[1] = -1;} else if(yPos < 10){ this.direction[1] = 1;}
+                // if(this.position.x > 10){this.direction[0] * -1;}
+            },
+            collide: function() {
+
+                if(this.available){
+                    this.myCircle.fillColor = 'red';
+                    this.sendMessage();
+                    this.available = false;
+                    this.leavingContact = true;
+                }
+
+            },
+            unCollide: function() {
+                 if(this.leavingContact){
+                //     // this.sendMessage();
+                    this.myCircle.fillColor = 'white';
+                    this.available = true;
+                    this.leavingContact = false;
+                }
+
+
+            },
+            sendMessage: function() {
+                console.log("hey hey hey");
+                // bell.play();
+                // bell.stop();
+            }
+
+        });
+
+
+
+        var dragSegment = Base.extend({
+            initialize: function(position) {
+                this.position = position;
+                this.myCircle = new Path.Circle(new Point(this.position), 20);
+
+
+                this.speed = [Math.random(1.0,5.0),Math.random(1.0,5.0)];
+                // this.speed = [2.0, 2.0];
+                this.direction = [1,1];
+                this.available = true;
+                this.leavingContact = false;
+
+                var color1 = "#8a8";
+
+                this.myCircle.fillColor = color1;
+
+            },
+            run: function() {
+                this.myCircle.position = this.position;
+                // this.moveAround();
+            },
+            move: function(position) {
+                this.position = position;
+            },
+            resize: function(radius) {
+                this.myCircle.scale(radius);
+            },
+            moveAround: function() {
+                var xPos = this.position.x;
+                var yPos = this.position.y;
+                var xSize = view.viewSize.width;
+                var ySize = view.viewSize.height;
+                this.position.x += (this.speed[0] * this.direction[0]);
+                this.position.y += (this.speed[1] * this.direction[1]);
+                if(xPos > xSize){ this.direction[0] = -1;} else if(xPos < 10){ this.direction[0] = 1;}
+                if(yPos > ySize){ this.direction[1] = -1;} else if(yPos < 10){ this.direction[1] = 1;}
+            },
+            collide: function() {
+
+                if(this.available){
+                    this.myCircle.fillColor = 'blue';
+                    this.sendMessage();
+                    this.available = false;
+                    this.leavingContact = true;
+                }
+
+            },
+            unCollide: function() {
+                 if(this.leavingContact){
+                //     // this.sendMessage();
+                    this.myCircle.fillColor = 'blue';
+                    this.available = true;
+                    this.leavingContact = false;
+                }
+
+
+            },
+            sendMessage: function() {
+                console.log("hey hey hey");
+            }
+
+        });
+
+
+
+
+
+        function moveDragon(incre, xin, yin) {
+
+            var drgSgX = drgnSg[incre].position.x;
+            var drgSgY = drgnSg[incre].position.y;
+
+            var segLength = 20 * incre;
+            var dx = xin - drgSgX;
+            var dy = yin - drgSgY;
+            var angle = Math.atan2(dy, dx);
+            drgSgX = xin - Math.cos(angle) * segLength;
+            drgSgY = yin - Math.sin(angle) * segLength;
+
+
+            // var drgSgX = incre * 50;
+            // var drgSgY = yin;
+
+            // segment(tailX[iincre], tailY[incre], angle);
+            drgnSg[incre].move(new Point(drgSgX, drgSgY));
+
+        }
+
+
+
+
+        function onMouseMove(event) {
+            // drgn.move(event.point);
+
+
+
+             for (var i = 0, l = drgnSg.length; i < l; i++) {
+                // drgnSg[i].move(event.point);
+                // drgnSg[i]run();
+                moveDragon(i, event.point.x, event.point.y);
+                drgnSg[i].run();
+             }
+
+        }
+
+
+
+
+
+
+        //--------------------- main ---------------------
+
+        // var textNum = [];
+
+        var cldrs = [];
+        var numBalls = 3;
+        for (var i = 0; i < numBalls; i++) {
+            var position = Point.random() * view.size;
+            cldrs.push(new Collideable(position));
+
+            // textNum.push(new PointText(position));
+        }
+
+        var drgnSg = [];
+        var numSegs = 10;
+        for (var i = 0; i < numSegs; i++) {
+            var position = view.center;
+            drgnSg.push(new dragSegment(position));
+            // drgnSg[i].resize(1.0 / i);
+        }
+
+        // drgn = new dragSegment(position);
+
+        // var text = new PointText(new Point(xPos, yPos));
+
+
+        var position = Point.random() * view.size;
+        // bb = new Collideable(position);
+
+        // cldrs[0] = new Collideable(position);
+
+
+        function onFrame(event) {
+
+            // drgn.run();
+
+
+            for (var i = 0, l = cldrs.length; i < l; i++) {
+                cldrs[i].run();
+                cldrs[i].moveAround();
+
+
+
+                var xPos = cldrs[i].position.x;
+                var yPos = cldrs[i].position.y;
+                var vector1 = new Point(cldrs[i].position);
+                // console.log(vector1.length);
+
+
+
+                // textNum[i].justification = 'center';
+                // textNum[i].fillColor = 'black';
+                // textNum[i].position = cldrs[i].position;
+                // textNum[i].content = i;
+
+
+
+                var collideableTest = false;
+
+                for(var j = 0; j < l; j++){
+
+                    if (i !== j){
+                        var xPos2 = cldrs[j].position.x;
+                        var yPos2 = cldrs[j].position.y;
+
+                        var vector2 = new Point(cldrs[j].position);
+                        var vecLength = vector1 - vector2;
+                        var vecLengthVal = Math.abs(vecLength.length);
+
+
+                        if(vecLengthVal < 50){
+                            // console.log("i:" + i + " j:" + j + " length:" + vecLength.length);
+                            collideableTest = true;
+                        }
+                    }
+                }
+
+                if(collideableTest){
+                    cldrs[i].collide();
+                    // cldrs[i].unCollide();
+                } else {
+                    cldrs[i].unCollide();
+                }
+
+            }
+
+
+            // bb.run();
+        }
+
+
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize></canvas>
+</body>
+</html>
