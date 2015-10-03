@@ -140,7 +140,7 @@
             var drgSgX = drgnSg[incre].position.x;
             var drgSgY = drgnSg[incre].position.y;
 
-            var segLength = 20 * incre;
+            var segLength = 20;
             var dx = xin - drgSgX;
             var dy = yin - drgSgY;
             var angle = Math.atan2(dy, dx);
@@ -164,12 +164,16 @@
 
 
 
-             for (var i = 0, l = drgnSg.length; i < l; i++) {
+            moveDragon(0, event.point.x, event.point.y);
+
+             for (var i = 0, l = drgnSg.length-1; i < l; i++) {
                 // drgnSg[i].move(event.point);
                 // drgnSg[i]run();
-                moveDragon(i, event.point.x, event.point.y);
+                moveDragon(i+1, drgnSg[i].position.x, drgnSg[i].position.y);
                 drgnSg[i].run();
              }
+
+             
 
         }
 
@@ -265,7 +269,32 @@
             }
 
 
-            // bb.run();
+            // DRRAAAGGGGOONNNNN BIITTT
+
+
+            for (var i = 0, l = drgnSg.length; i < l; i++) {
+
+                var xPos = drgnSg[i].position.x;
+                var yPos = drgnSg[i].position.y;
+                var vector1 = new Point(drgnSg[i].position);
+
+                var collideableTest = false;
+
+                for(var j = 0; j < cldrs.length; j++){
+
+                        var vector2 = new Point(cldrs[j].position);
+                        var vecLength = vector1 - vector2;
+                        var vecLengthVal = Math.abs(vecLength.length);
+
+
+                        if(vecLengthVal < 50){
+                            cldrs[j].collide();
+                        }
+                }
+  
+
+            }
+
         }
 
 
