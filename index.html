@@ -18,6 +18,8 @@
                 this.direction = [1,1];
                 this.available = true;
                 this.leavingContact = false;
+
+                this.trigger = false;
             },
             run: function() {
                 this.myCircle.position = this.position;
@@ -48,6 +50,16 @@
                 }
 
             },
+            collide: function(iternum) {
+
+                if(this.available){
+                    this.myCircle.fillColor = 'red';
+                    this.sendMessage(iternum);
+                    this.available = false;
+                    this.leavingContact = true;
+                }
+
+            },
             unCollide: function() {
                  if(this.leavingContact){
                 //     // this.sendMessage();
@@ -62,7 +74,13 @@
                 console.log("hey hey hey");
                 // bell.play();
                 // bell.stop();
+            },
+            sendMessage: function(message) {
+                console.log(message);
+                // bell.play();
+                // bell.stop();
             }
+
 
         });
 
@@ -126,7 +144,7 @@
 
             },
             sendMessage: function() {
-                console.log("hey hey hey");
+                console.log("Ho Ho Ho");
             }
 
         });
@@ -165,15 +183,16 @@
 
 
             moveDragon(0, event.point.x, event.point.y);
+            drgnSg[0].run();
 
              for (var i = 0, l = drgnSg.length-1; i < l; i++) {
                 // drgnSg[i].move(event.point);
                 // drgnSg[i]run();
                 moveDragon(i+1, drgnSg[i].position.x, drgnSg[i].position.y);
-                drgnSg[i].run();
+                drgnSg[i+1].run();
              }
 
-             
+
 
         }
 
@@ -196,7 +215,7 @@
         }
 
         var drgnSg = [];
-        var numSegs = 10;
+        var numSegs = 30;
         for (var i = 0; i < numSegs; i++) {
             var position = view.center;
             drgnSg.push(new dragSegment(position));
@@ -239,6 +258,7 @@
 
 
 
+
                 var collideableTest = false;
 
                 for(var j = 0; j < l; j++){
@@ -259,8 +279,24 @@
                     }
                 }
 
+                for(var j = 0; j < drgnSg.length; j++){
+
+                        var xPos2 = drgnSg[j].position.x;
+                        var yPos2 = drgnSg[j].position.y;
+
+                        var vector2 = new Point(drgnSg[j].position);
+                        var vecLength = vector1 - vector2;
+                        var vecLengthVal = Math.abs(vecLength.length);
+
+
+                        if(vecLengthVal < 50){
+                            collideableTest = true;
+                        }
+                    
+                }
+
                 if(collideableTest){
-                    cldrs[i].collide();
+                    cldrs[i].collide(i);
                     // cldrs[i].unCollide();
                 } else {
                     cldrs[i].unCollide();
@@ -272,28 +308,28 @@
             // DRRAAAGGGGOONNNNN BIITTT
 
 
-            for (var i = 0, l = drgnSg.length; i < l; i++) {
+            // for (var i = 0, l = drgnSg.length; i < l; i++) {
 
-                var xPos = drgnSg[i].position.x;
-                var yPos = drgnSg[i].position.y;
-                var vector1 = new Point(drgnSg[i].position);
+            //     var xPos = drgnSg[i].position.x;
+            //     var yPos = drgnSg[i].position.y;
+            //     var vector1 = new Point(drgnSg[i].position);
 
-                var collideableTest = false;
+            //     var collideableTest = false;
 
-                for(var j = 0; j < cldrs.length; j++){
+            //     for(var j = 0; j < cldrs.length; j++){
 
-                        var vector2 = new Point(cldrs[j].position);
-                        var vecLength = vector1 - vector2;
-                        var vecLengthVal = Math.abs(vecLength.length);
+            //             var vector2 = new Point(cldrs[j].position);
+            //             var vecLength = vector1 - vector2;
+            //             var vecLengthVal = Math.abs(vecLength.length);
 
 
-                        if(vecLengthVal < 50){
-                            cldrs[j].collide();
-                        }
-                }
+            //             if(vecLengthVal < 50){
+            //                 cldrs[j].collide();
+            //             }
+            //     }
   
 
-            }
+            // }
 
         }
 
