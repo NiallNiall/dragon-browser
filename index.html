@@ -17,17 +17,13 @@
 
 
         var tailSegSVG = project.importSVG(document.getElementById('drag-seg'));
-        // var tailSeg = new Symbol(tailSegmentSVG);
         tailSegSVG.visible = true;
         tailSegSVG.position = new Point(200, 200);
         tailSegSVG.scale(0.1);
         tailSegSVG.rotate(90);
         var tailSeg = new Symbol(tailSegSVG);
-        // var placedTail = tailSeg.place(0,0);
 
-        // tailSeg.place(new Point(200,200));
-
-        // var placed = headSym.place(new Point(80, 50));
+        mousePos = new Point(0, 0);
 
 
         var Collideable = Base.extend({
@@ -214,7 +210,7 @@
             var angle = Math.atan2(dy, dx);
 
 
-            
+
 
         }
 
@@ -225,6 +221,8 @@
             // drgn.move(event.point);
 
             // head.position = new Point(200, 400);
+
+            mousePos = new Point(0, 0);
 
 
             moveDragon(0, event.point.x, event.point.y);
