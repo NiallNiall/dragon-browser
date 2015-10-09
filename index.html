@@ -9,11 +9,16 @@
     <script type="text/paperscript" canvas="canvas">
 
 
-        var head = project.importSVG(document.getElementById('drag-head'));
+        var headSVG = project.importSVG(document.getElementById('drag-head'));
         // var headSym = new Symbol(head);
-        head.visible = true; // Turn off the effect of display:none;
-        head.scale(0.4);
-        head.rotate(0);
+        headSVG.visible = true; // Turn off the effect of display:none;
+        headSVG.position = new Point(0,0);
+        headSVG.scale (0.3);
+        headSVG.rotate(90);
+        head = new Symbol(headSVG);
+        head = head.place(0,0);
+        // head.scale(0.4);
+        // head.rotate(0);
 
 
         var tailSegSVG = project.importSVG(document.getElementById('drag-seg'));
@@ -170,6 +175,9 @@
             },
             sendMessage: function() {
                 console.log("Ho Ho Ho");
+            },
+            changeZIndex: function() {
+                // this.myCircle.
             }
 
         });
@@ -202,13 +210,13 @@
 
         function moveDragonHead(xin, yin) {
 
-            var drgSgX = drgnSg[0].position.x;
-            var drgSgY = drgnSg[0].position.y;
+            // var drgSgX = drgnSg[0].position.x;
+            // var drgSgY = drgnSg[0].position.y;
 
-            var segLength = 20;
-            var dx = xin - drgSgX;
-            var dy = yin - drgSgY;
-            var angle = Math.atan2(dy, dx);
+            // var segLength = 20;
+            // var dx = xin - drgSgX;
+            // var dy = yin - drgSgY;
+            // var angle = Math.atan2(dy, dx);
 
 
 
@@ -250,8 +258,15 @@
 
 
              }
+
              moveDragonHead(mousePos.x, mousePos.y);
+
+            // var dx = mousePos.x - target.x;
+            // var dy = mousePos.y - target.y;
+            var angle = ((Math.atan2(dy, dx) * 180) / Math.PI);
+
              head.position = mousePos;
+             head.rotation = angle;
 
         }
 
@@ -275,6 +290,7 @@
         for (var i = 0; i < numSegs; i++) {
             var position = view.center;
             drgnSg.push(new dragSegment(position));
+
             // project.activeLayer.insertChild(0, drgnSg[i]);
             // drgnSg[i].resize(1.0 / i);
         }
