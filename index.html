@@ -24,6 +24,7 @@
         var tailSeg = new Symbol(tailSegSVG);
 
         mousePos = new Point(0, 0);
+        target = new Point(0,0);
 
 
         var Collideable = Base.extend({
@@ -218,14 +219,27 @@
 
 
         function onMouseMove(event) {
-            // drgn.move(event.point);
-
-            // head.position = new Point(200, 400);
-
-            mousePos = new Point(0, 0);
+            target = event.point;
+        }
 
 
-            moveDragon(0, event.point.x, event.point.y);
+        function moveMouseBit() {
+            var easing = 0.05;
+
+            // targetX = event.point.x;
+            var dx = target.x - mousePos.x;
+            if(Math.abs(dx) > 1) {
+                mousePos.x += dx * easing;
+            }
+
+            // var targetY = event.point.y;
+            var dy = target.y - mousePos.y;
+            if(Math.abs(dy) > 1) {
+                mousePos.y += dy * easing;
+            }
+
+
+            moveDragon(0, mousePos.x, mousePos.y);
             drgnSg[0].run();
 
              for (var i = 0, l = drgnSg.length-1; i < l; i++) {
@@ -236,14 +250,10 @@
 
 
              }
-             moveDragonHead(event.point.x, event.point.y);
-             head.position = event.point;
-
+             moveDragonHead(mousePos.x, mousePos.y);
+             head.position = mousePos;
 
         }
-
-
-
 
 
 
@@ -284,6 +294,7 @@
 
         function onFrame(event) {
 
+            moveMouseBit();
             // drgn.run();
 
 
