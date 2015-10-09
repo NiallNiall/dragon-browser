@@ -13,14 +13,23 @@
         headSVG.visible = true; // Turn off the effect of display:none;
         headSVG.position = new Point(0,0);
         headSVG.scale (0.3);
-        headSVG.rotate(90);
+        headSVG.rotate(270);
         head = new Symbol(headSVG);
         head = head.place(0,0);
+
+        var tailendSVG = project.importSVG(document.getElementById('drag-tailend'));
+        tailendSVG.visible = true; // Turn off the effect of display:none;
+        tailendSVG.position = new Point(0,0);
+        tailendSVG.scale (0.3);
+        tailendSVG.rotate(270);
+        tailEnd = new Symbol(tailendSVG);
+        tailEnd = tailEnd.place(0,0);
 
 
         var tailSegSVG = project.importSVG(document.getElementById('drag-seg'));
         console.log("my object: %o", tailSegSVG);
-        tailSegSVG.children[0].children[1].fillColor = 'black';
+        // tailSegSVG.children[0].children[1].fillColor = 'black';
+        // tailSegSVG.children[0].children[0].fillColor = 'white';
 
         tailSegSVG.visible = true;
         tailSegSVG.position = new Point(200, 200);
@@ -33,16 +42,39 @@
         mousePos = new Point(0, 0);
         target = new Point(0,0);
 
+        targetHeadRot = 0;
+        currentHeadRot = 0;
+
         var dragSegment = Base.extend({
             initialize: function(position) {
                 this.position = position;
-                this.mySVG = placedTail = tailSeg.place(0,0);
+
+                // var tailSegSVGCopy = tailSeg.clone();
+                tailSegSVG.children[0].children[0].fillColor = {
+                    hue: Math.random() * 360,
+                    saturation: 1,
+                    brightness: 1
+                };
+                var tailSegCopy = new Symbol(tailSegSVG);
+
+
+                // path = new Path();
+                // path.fillColor = {
+                //     hue: Math.random() * 360,
+                //     saturation: 1,
+                //     brightness: 1
+                // };
+
+
+                this.mySVG = tailSegCopy.place(0,0);
 
                 this.speed = [Math.random(1.0,5.0),Math.random(1.0,5.0)];
                 this.direction = [1,1];
                 this.available = true;
                 this.leavingContact = false;
                 this.rotation = 0;
+
+                // this.mySVG.children[0].children[0].fillColor = 'white';
 
                 var color1 = "#8a8";
 
@@ -99,6 +131,9 @@
             },
             changeZIndex: function() {
                 // this.myCircle.
+            },
+            scaleSegment: function(scl) {
+                this.mySVG.scale(scl);
             }
 
         });
@@ -112,7 +147,7 @@
             var drgSgX = drgnSg[incre].position.x;
             var drgSgY = drgnSg[incre].position.y;
 
-            var segLength = 20;
+            var segLength = 30;
             var dx = xin - drgSgX;
             var dy = yin - drgSgY;
             var angle = Math.atan2(dy, dx);
@@ -120,6 +155,8 @@
             drgSgY = yin - Math.sin(angle) * segLength;
 
             drgnSg[incre].move(new Point(drgSgX, drgSgY), angle * 180 / Math.PI);
+
+            // tailEnd.position = drgnSg[13].position;//x, drgnSg[drgnSg.length].y);
 
         }
 
@@ -149,17 +186,35 @@
              for (var i = 0, l = drgnSg.length-1; i < l; i++) {
                 moveDragon(i+1, drgnSg[i].position.x, drgnSg[i].position.y);
                 drgnSg[i+1].run();
-
-
              }
 
-            var angle = ((Math.atan2(dy, dx) * 180) / Math.PI);
+            var dx2 = drgnSg[1].position.x - drgnSg[0].position.x;
+            var dy2 = drgnSg[1].position.y - drgnSg[0].position.y;
+
+            var angle = ((Math.atan2(dy2, dx2) * 180) / Math.PI);
+
+            targetHeadRot = angle;
+            var dr = targetHeadRot - currentHeadRot;
+            if(Math.abs(dr) > 1) {
+                currentHeadRot += dr * 0.05;
+            }
 
              head.position = mousePos;
              head.rotation = angle;
 
         }
 
+        function map_range(value, low1, high1, low2, high2) {
+            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+        }
+
+        function easeRotation(angle) {
+              // float targetR = angle;
+              // float dr = targetHeadRot - currentHeadRot;
+              // if(abs(dr) > 1) {
+              //   currentHeadRot += dr * 0.01;
+              // }
+        }
 
 
         //--------------------- main ---------------------
@@ -173,10 +228,11 @@
             drgnSg.push(new dragSegment(position));
             // dragonGroup.addChild(drgnSg[i].mySVG);
             dragonGroup.addChild(drgnSg[i].mySVG);
+            var scl = map_range(i,0,numSegs,1.0, 0.1);
+            drgnSg[i].scaleSegment(scl);
         }
         dragonGroup.reverseChildren();
         dragonGroup.insertBelow(head);
-
 
         project.activeLayer.insertChild(100, head);
 
@@ -193,24 +249,22 @@
     <svg xmlns="http://www.w3.org/2000/svg"
          xmlns:xlink="http://www.w3.org/1999/xlink"
          height="600" width="600" id="drag-head" style="display:none">
-    <g>
-        <path fill="#009BA7" d="M1011.7,441.6c-4.7-24.6-21.5-40.3-51.7-40.3s-47,15.7-51.7,40.3c-4.7,24.7-8.7,131.3-8.7,131.3H960h60.4
-            C1020.4,572.9,1016.4,466.3,1011.7,441.6z"/>
-        <path fill="#3A777B" d="M989.4,439.7C987,417.7,960,419,960,419s-27-1.3-29.4,20.7c-2.3,22-47.3,133.3-47.3,133.3H960h76.7
-            C1036.7,573,991.7,461.7,989.4,439.7z"/>
-        <circle fill="#009BA7" cx="1013" cy="506.3" r="30.7"/>
-        <circle cx="1013" cy="506.3" r="23.7"/>
-        <circle fill="#FFFFFF" cx="1013" cy="506.3" r="17.2"/>
-        <circle fill="#2DB9DD" cx="1013" cy="506.3" r="9.9"/>
-        <path fill="#3A777B" d="M982.3,506.3c0,16.9,13.7,30.7,30.7,30.7c16.9,0,30.7-13.7,30.7-30.7H982.3z"/>
-        <circle fill="#009BA7" cx="907" cy="506.3" r="30.7"/>
-        <circle cx="907" cy="506.3" r="23.7"/>
-        <circle fill="#FFFFFF" cx="907" cy="506.3" r="17.2"/>
-        <circle fill="#2DB9DD" cx="907" cy="506.3" r="9.9"/>
-        <path fill="#3A777B" d="M937.7,506.3c0,16.9-13.7,30.7-30.7,30.7s-30.7-13.7-30.7-30.7H937.7z"/>
-        <circle fill="#2C595C" cx="936.6" cy="434.1" r="12.4"/>
-        <circle fill="#2C595C" cx="983.4" cy="434.1" r="12.4"/>
-    </g>
+        <path fill="#009BA7" d="M616.7,636.9c-4.7-24.6-21.5-40.3-51.7-40.3s-47,15.7-51.7,40.3c-4.7,24.7-8.7,131.3-8.7,131.3H565h60.4
+        C625.4,768.2,621.4,661.6,616.7,636.9z"/>
+        <path fill="#3A777B" d="M648.3,765.8c-43.7-56.8-47.5-119-53.9-130.8c-2.4-22-29.4-20.7-29.4-20.7s-27-1.3-29.4,20.7
+        c-6.4,11.8-10.2,74-53.9,130.8c-29.4,38.2,54-4.5,83.3,65.5C594.3,761.3,677.7,804,648.3,765.8z"/>
+        <circle fill="#009BA7" cx="618" cy="701.6" r="30.7"/>
+        <circle cx="618" cy="701.6" r="23.7"/>
+        <circle fill="#FFFFFF" cx="618" cy="701.6" r="17.2"/>
+        <circle fill="#2DB9DD" cx="618" cy="701.6" r="9.9"/>
+        <path fill="#3A777B" d="M587.3,701.6c0,16.9,13.7,30.7,30.7,30.7s30.7-13.7,30.7-30.7H587.3z"/>
+        <circle fill="#2C595C" cx="588.4" cy="629.4" r="12.4"/>
+        <circle fill="#009BA7" cx="512" cy="701.6" r="30.7"/>
+        <circle cx="512" cy="701.6" r="23.7"/>
+        <circle fill="#FFFFFF" cx="512" cy="701.6" r="17.2"/>
+        <circle fill="#2DB9DD" cx="512" cy="701.6" r="9.9"/>
+        <path fill="#3A777B" d="M542.7,701.6c0,16.9-13.7,30.7-30.7,30.7s-30.7-13.7-30.7-30.7H542.7z"/>
+        <circle fill="#2C595C" cx="541.6" cy="629.4" r="12.4"/>
     </svg>
 
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -221,6 +275,25 @@
                 C488.5,786.4,252,438,85,343z"/>
             <path fill="#009BA7" d="M85,424c0,0-308,290.6-168.7,368.4S85,940.1,85,940.1s29.4-69.9,168.7-147.7S85,424,85,424z"/>
         </g>
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     height="600" width="600" id="drag-tailend" style="display:none">
+    <circle fill="#009BA7" cx="170" cy="561.8" r="66.5"/>
+    <g>
+        <path fill="#EB5D0B" d="M213.8,591.3c-3.6-32.9-43.9-29.4-43.9-29.4s-40.3-3.4-43.9,29.4c-9.6,17.6-80.8,142.4-22.9,115.5
+            s31,56.8,66.9,55.3c35.9,1.5,9-82.2,66.9-55.3C294.6,733.7,223.4,609,213.8,591.3z"/>
+        <path fill="#EC8141" d="M206.6,588.5c-3-27.4-36.6-24.5-36.6-24.5s-33.6-2.9-36.6,24.5c-8,14.7-67.4,118.7-19.1,96.3
+            s25.8,47.3,55.7,46.1c29.9,1.2,7.5-68.5,55.7-46.1S214.5,603.2,206.6,588.5z"/>
+        <path fill="#EEA476" d="M199.3,585.6c-2.4-21.9-29.3-19.7-29.3-19.7s-26.9-2.3-29.3,19.7c-6.4,11.8-53.9,95.1-15.3,77.1
+            s20.7,37.9,44.6,36.9c23.9,1,6-54.9,44.6-36.9S205.7,597.4,199.3,585.6z"/>
+        <path fill="#EFC8AC" d="M192,582.7c-1.8-16.5-22-14.8-22-14.8s-20.2-1.7-22,14.8c-4.8,8.8-40.5,71.4-11.5,57.9
+            c29-13.5,15.5,28.5,33.5,27.7c18,0.7,4.5-41.2,33.5-27.7C232.5,654.1,196.8,591.5,192,582.7z"/>
+        <path fill="#F0EBE2" d="M184.7,579.8c-1.2-11-14.7-9.9-14.7-9.9s-13.5-1.2-14.7,9.9c-3.2,5.9-27.1,47.7-7.7,38.7s10.4,19,22.4,18.5
+            c12,0.5,3-27.5,22.4-18.5S187.9,585.7,184.7,579.8z"/>
+    </g>
+    <circle fill="#FFDD00" stroke="#EB5D0B" stroke-width="10" stroke-miterlimit="10" cx="170" cy="561.8" r="42.1"/>
     </svg>
 
 </body>
