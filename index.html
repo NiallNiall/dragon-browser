@@ -17,26 +17,18 @@
         headSVG.rotate(90);
         head = new Symbol(headSVG);
         head = head.place(0,0);
-        // head.scale(0.4);
-        // head.rotate(0);
 
         var treeSVG = project.importSVG(document.getElementById('svgtree-1'));
         treeSVG.visible = true; // Turn off the effect of display:none;
         treeSVG.position = new Point(0,0);
-        // treeSVG.scale (0.3);
         treeSVG.rotate(90);
         tree1 = new Symbol(treeSVG);
-        // tree1s = tree1.place(0,0);
-        // treee = tree1.place(400,400);
-        // tree1.place(400,400);
 
         var tree1s = [];
-        var numTree1s = 10;
+        var numTree1s = 3;
         for (var i = 0; i < numTree1s; i++) {
             var position = Point.random() * view.size;
             tree1s.push(tree1.place(position));
-            // tree1s[] = new tree1.place(0,0);
-            // textNum.push(new PointText(position));
         }
 
 
@@ -133,7 +125,7 @@
             initialize: function(position) {
                 this.position = position;
                 // this.myCircle = new Path.Circle(new Point(this.position), 20);
-                this.myCircle = placedTail = tailSeg.place(0,0);
+                this.mySVG = placedTail = tailSeg.place(0,0);
 
                 this.speed = [Math.random(1.0,5.0),Math.random(1.0,5.0)];
                 // this.speed = [2.0, 2.0];
@@ -144,12 +136,12 @@
 
                 var color1 = "#8a8";
 
-                this.myCircle.fillColor = color1;
+                this.mySVG.fillColor = color1;
 
             },
             run: function() {
-                this.myCircle.position = this.position;
-                this.myCircle.rotation = this.rotation;
+                this.mySVG.position = this.position;
+                this.mySVG.rotation = this.rotation;
                 // this.moveAround();
             },
             move: function(position) {
@@ -160,7 +152,7 @@
                 this.rotation = rotate;
             },
             resize: function(radius) {
-                this.myCircle.scale(radius);
+                this.mySVG.scale(radius);
             },
             moveAround: function() {
                 var xPos = this.position.x;
@@ -175,7 +167,7 @@
             collide: function() {
 
                 if(this.available){
-                    this.myCircle.fillColor = 'blue';
+                    this.mySVG.fillColor = 'blue';
                     this.sendMessage();
                     this.available = false;
                     this.leavingContact = true;
@@ -185,7 +177,7 @@
             unCollide: function() {
                  if(this.leavingContact){
                 //     // this.sendMessage();
-                    this.myCircle.fillColor = 'blue';
+                    this.mySVG.fillColor = 'blue';
                     this.available = true;
                     this.leavingContact = false;
                 }
@@ -228,17 +220,6 @@
         }
 
         function moveDragonHead(xin, yin) {
-
-            // var drgSgX = drgnSg[0].position.x;
-            // var drgSgY = drgnSg[0].position.y;
-
-            // var segLength = 20;
-            // var dx = xin - drgSgX;
-            // var dy = yin - drgSgY;
-            // var angle = Math.atan2(dy, dx);
-
-
-
 
         }
 
@@ -399,32 +380,6 @@
 
             }
 
-
-            // DRRAAAGGGGOONNNNN BIITTT
-
-
-            // for (var i = 0, l = drgnSg.length; i < l; i++) {
-
-            //     var xPos = drgnSg[i].position.x;
-            //     var yPos = drgnSg[i].position.y;
-            //     var vector1 = new Point(drgnSg[i].position);
-
-            //     var collideableTest = false;
-
-            //     for(var j = 0; j < cldrs.length; j++){
-
-            //             var vector2 = new Point(cldrs[j].position);
-            //             var vecLength = vector1 - vector2;
-            //             var vecLengthVal = Math.abs(vecLength.length);
-
-
-            //             if(vecLengthVal < 50){
-            //                 cldrs[j].collide();
-            //             }
-            //     }
-
-
-            // }
 
         }
 
