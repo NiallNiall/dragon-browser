@@ -208,14 +208,39 @@
             return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
         }
 
-        function easeRotation(angle) {
-              // float targetR = angle;
-              // float dr = targetHeadRot - currentHeadRot;
-              // if(abs(dr) > 1) {
-              //   currentHeadRot += dr * 0.01;
-              // }
+
+        function dragonSegCollide(incre, vector2) {
+            // var vector1 = new view.center;
+            // var vector2 = new Point(drgnSg[incre].position);
+            // var vecLength = vector1 - vector2;
+            // var vecLengthVal = Math.abs(vecLength.length);
+
+            // if(vecLengthVal < 50) {
+            //     console.log("hey there");
+            // }
+
+            var vector1 = drgnSg[incre].position;
+            var vector2 = vector2;
+            // tailEnd.position = vector2;
+            // view.center
+
+            var distBool = collideTest(vector1, vector2, 50);
+
+            if(distBool) {
+                console.log(incre);
+            }
         }
 
+        var collideTest = function( vector1, vector2, distance) {
+            var vecLength = vector1 - vector2;
+            var vecLengthVal = Math.abs(vecLength.length);
+
+            if(vecLengthVal < distance) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         //--------------------- main ---------------------
 
@@ -236,8 +261,17 @@
 
         project.activeLayer.insertChild(100, head);
 
+        var myCircle = new Path.Circle(new Point(100, 70), 20);
+        myCircle.position = view.center;
+        myCircle.fillColor = 'white';
+
         function onFrame(event) {
             moveMouseBit();
+
+            for (var i = 0; i < numSegs; i++) {
+                dragonSegCollide(i, view.center);
+            }
+
         }
 
 
