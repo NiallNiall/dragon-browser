@@ -20,7 +20,7 @@
         var tailendSVG = project.importSVG(document.getElementById('drag-tailend'));
         tailendSVG.visible = true; // Turn off the effect of display:none;
         tailendSVG.position = new Point(0,0);
-        tailendSVG.scale (0.3);
+        tailendSVG.scale (0.2);
         tailendSVG.rotate(270);
         tailEnd = new Symbol(tailendSVG);
         tailEnd = tailEnd.place(0,0);
@@ -48,24 +48,10 @@
         var dragSegment = Base.extend({
             initialize: function(position) {
                 this.position = position;
-
-                // var tailSegSVGCopy = tailSeg.clone();
-                tailSegSVG.children[0].children[0].fillColor = {
-                    hue: Math.random() * 360,
-                    saturation: 1,
-                    brightness: 1
-                };
                 var tailSegCopy = new Symbol(tailSegSVG);
 
-
-                var path = new Path(new Point(20, 20), new Point(50, 50));
-                path.style = {
-                    strokeColor: 'red',
-                    strokeWidth: 10,
-                    strokeCap: 'round'
-                };
                 // Create a symbol from the path:
-                var symbol = new Symbol(path);
+                var symbol = new Symbol(tailSegSVG);
 
 
                 this.mySVG = symbol.place(0,0);
@@ -76,11 +62,14 @@
                 this.leavingContact = false;
                 this.rotation = 0;
 
-                // this.mySVG.children[0].children[0].fillColor = 'white';
+                this.basecolor = {
+                    hue: 100,
+                    saturation: 1,
+                    brightness: 1
+                };
+                this.basescaling = 1.0;
 
-                var color1 = "#8a8";
-
-                this.mySVG.fillColor = color1;
+                // this.mySVG.fillColor = color1;
 
             },
             run: function() {
@@ -113,6 +102,8 @@
                 if(this.available){
                     this.mySVG.fillColor = 'blue';
                     this.sendMessage();
+                    this.changeColour('white');
+                    this.scaleSegment(this.basescaling * 1.2);
                     this.available = false;
                     this.leavingContact = true;
                 }
@@ -123,23 +114,41 @@
                 //     // this.sendMessage();
                     this.mySVG.fillColor = 'blue';
                     this.available = true;
+                    this.scaleSegment(this.basescaling);
                     this.leavingContact = false;
+                    this.changeColour(this.basecolor);
                 }
 
 
             },
             sendMessage: function() {
-                console.log("Ho Ho Ho");
+                // console.log("Ho Ho Ho");
             },
             changeZIndex: function() {
                 // this.myCircle.
             },
             scaleSegment: function(scl) {
-                this.mySVG.scale(scl);
+                this.mySVG.scaling = scl;
+            },
+            scaleSegmentbyInc: function(scl) {
+                this.basescaling = scl;
+                this.scaleSegment(this.basescaling);
             },
             changeColour: function() {
-                this.mySVG.symbol.definition.strokeColor.hue += 0.2;
+                // this.mySVG.symbol.definition.strokeColor.hue += 0.2;
                 // this.mySVG.children[0].children[0].fillColor = red;
+            },
+            changeColour: function(color) {
+                  this.mySVG.symbol.definition.children[0].children[0].fillColor = color;
+            },
+            changeColourbyInc: function(incre) {
+
+                this.basecolor = {
+                    hue: incre*10,
+                    saturation: incre * 0.2,
+                    brightness: 0.9
+                };
+                this.changeColour(this.basecolor);
             }
 
         });
@@ -208,6 +217,17 @@
              head.position = mousePos;
              head.rotation = angle;
 
+
+             var drgSegArrayLength = drgnSg.length-1;
+
+            var dx2 = drgnSg[drgSegArrayLength].position.x - drgnSg[drgSegArrayLength-1].position.x;
+            var dy2 = drgnSg[drgSegArrayLength].position.y - drgnSg[drgSegArrayLength-1].position.y;
+            var angle = ((Math.atan2(dy2, dx2) * 180) / Math.PI);
+
+             tailEnd.position = drgnSg[drgSegArrayLength].position;
+             tailEnd.rotation = angle;
+             // tailSeg.rotation = angle;
+
         }
 
         function map_range(value, low1, high1, low2, high2) {
@@ -234,6 +254,9 @@
 
             if(distBool) {
                 console.log(incre);
+                drgnSg[incre].collide();
+            } else {
+                drgnSg[incre].unCollide();
             }
         }
 
@@ -260,7 +283,8 @@
             // dragonGroup.addChild(drgnSg[i].mySVG);
             dragonGroup.addChild(drgnSg[i].mySVG);
             var scl = map_range(i,0,numSegs,1.0, 0.1);
-            drgnSg[i].scaleSegment(scl);
+            drgnSg[i].scaleSegmentbyInc(scl);
+            drgnSg[i].changeColourbyInc(i);
 
         }
         dragonGroup.reverseChildren();
@@ -277,7 +301,6 @@
 
             for (var i = 0; i < numSegs; i++) {
                 dragonSegCollide(i, view.center);
-                drgnSg[i].changeColour();
             }
 
         }
