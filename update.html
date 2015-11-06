@@ -9,13 +9,13 @@
     <script type="text/paperscript" canvas="canvas">
 
 
-        var moundSVG = project.importSVG(document.getElementById('mound'));
-        moundSVG.visible = true; // Turn off the effect of display:none;
-        moundSVG.position = new Point(0,0);
-        moundSVG.scale (2.0);
-        // moundSVG.rotate(270);
-        mound = new Symbol(moundSVG);
-        mound = mound.place(view.center);
+        // var moundSVG = project.importSVG(document.getElementById('mound'));
+        // moundSVG.visible = true; // Turn off the effect of display:none;
+        // moundSVG.position = new Point(0,0);
+        // moundSVG.scale (2.0);
+        // // moundSVG.rotate(270);
+        // mound = new Symbol(moundSVG);
+        // mound = mound.place(view.center);
 
         var headSVG = project.importSVG(document.getElementById('drag-head'));
         headSVG.visible = true; // Turn off the effect of display:none;
@@ -46,7 +46,10 @@
         var tailSeg = new Symbol(tailSegSVG);
 
 
-
+        var hoverCircle = new Path.Circle(new Point(100, 70), 50);
+        hoverCircle.fillColor = null;
+        hoverCircle.strokeColor = 'white';
+        hoverCircle.scaling = 5.0;
 
 
         mousePos = new Point(0, 0);
@@ -54,6 +57,30 @@
 
         targetHeadRot = 0;
         currentHeadRot = 0;
+
+        // var hoverCircle = Base.extend({
+        //     initialize: function(position) {
+
+
+        //         tvar symbol = new Symbol(tailSegSVG);
+
+
+        //         this.mySVG = symbol.place(0,0);
+
+        //         this.speed = [Math.random(1.0,5.0),Math.random(1.0,5.0)];
+        //         this.direction = [1,1];
+        //         this.available = true;
+        //         this.leavingContact = false;
+        //         this.rotation = 0;
+
+        //         // this.mySVG.fillColor = color1;
+
+        //     }
+
+        // });
+
+
+
 
         var dragSegment = Base.extend({
             initialize: function(position) {
@@ -246,15 +273,6 @@
 
 
         function dragonSegCollide(incre, vector2) {
-            // var vector1 = new view.center;
-            // var vector2 = new Point(drgnSg[incre].position);
-            // var vecLength = vector1 - vector2;
-            // var vecLengthVal = Math.abs(vecLength.length);
-
-            // if(vecLengthVal < 50) {
-            //     console.log("hey there");
-            // }
-
             var vector1 = drgnSg[incre].position;
             var vector2 = vector2;
             // tailEnd.position = vector2;
