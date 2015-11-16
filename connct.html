@@ -9,15 +9,26 @@
     <script type="text/paperscript" canvas="canvas">
 
 
-        var segments = [new Point(30, 30), new Point(100, 100)];
+        var segments = [new Point(0, 0), new Point(100, 100)];
         var path = new Path(segments);
         path.strokeColor = 'white';
         path.strokeWidth = 10;
         path.strokeCap = 'round';
         path.strokeJoin = 'round';
 
-        function onFrame(event) {
+        function onMouseMove(event) {
+            path.segments[1].point = event.point;
+            // path.segments[0].handleOut = new Point(0,250);
+            // path.segments[1].handleIn = new Point(-100, -100);//event.point;//new Point(view.size.x,0);
+            // path.segments[1].handleOut = new Point(0,view.size.y);
+        }
 
+        function onFrame(event) {
+            // path.add(new Point(30, 75));
+            path.segments[0].handleOut = new Point(0,250);
+            path.segments[1].handleIn = new Point(0, -250);
+            // path.segments[1].point = new Point(500,500);
+            // path.smooth();
         }
 
 

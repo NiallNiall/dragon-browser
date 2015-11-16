@@ -17,6 +17,12 @@
         // mound = new Symbol(moundSVG);
         // mound = mound.place(view.center);
 
+        // Colours___________________
+        orangeClr = '#f7931e';
+
+
+
+
         var headSVG = project.importSVG(document.getElementById('drag-head'));
         headSVG.visible = true; // Turn off the effect of display:none;
         headSVG.position = new Point(0,0);
@@ -57,6 +63,21 @@
 
         targetHeadRot = 0;
         currentHeadRot = 0;
+
+        var whiskerSeg = [new Point(0,0), new Point(100,100) ]
+        var whisker1 = new Path(whiskerSeg);
+        whisker1.strokeColor = orangeClr;
+        whisker1.strokeWidth = 5;
+        whisker1.strokeCap = 'round';
+        whisker1.strokeJoin = 'round';
+        // whisker1.smooth();
+
+        whiskerSpot = new Path.Circle(new Point(100, 70), 14);
+        whiskerSpot.fillColor = 'white';
+        whiskerSpot.strokeColor = orangeClr;
+        whiskerSpot.strokeWidth = 7;
+
+
 
         var dragSegment = Base.extend({
             initialize: function(position) {
@@ -156,7 +177,7 @@
             },
             changeColourbyInc: function(incre) {
 
-                this.basecolor = '#f7931e';
+                this.basecolor = orangeClr;
                 // {
                 //     hue: incre*10,
                 //     saturation: 0.9,
@@ -190,9 +211,35 @@
         }
 
 
-        function onMouseMove(event) {
-            target = event.point;
+        function moveWhisker(whisker, point1, direction) {
+            whiskerDir = direction.normalize();
+            // crossWhisker = new Point(whiskerDir.x - whiskerDir.y, whiskerDir.y + whiskerDir.x)
+
+            var whiskP1 = point1;
+            var whiskP2 = point1 + whiskerDir * 40;
+            var whiskP3 = point1 + whiskerDir * 150;
+
+            // var sinus = Math.sin(event.time * 10);
+
+            // var whiskerMid = new Point(whiskP2.x + (whiskerDir.y * 50), whiskP2.y - (whiskerDir.x * 50));
+            var whiskerEnd = new Point(whiskP3.x + (whiskerDir.y * 100), whiskP3.y - (whiskerDir.x * 100));
+
+            // whisker.segments[0].point = point1;
+            // whisker.segments[1].point = point1 + (direction * 4);
+            // var whiskerEndCentre = point1 + (direction * 4);
+
+
+
+            whisker.segments[0].point = whiskP1;
+            whisker.segments[0].handleOut = new Point(whiskerDir.y * 100,whiskerDir.x * -100);
+
+            whisker.segments[1].point = whiskerEnd;                   
+            // whisker.segments[2].point = whiskerEnd;
+            whiskerSpot.position = whiskerEnd;
         }
+
+
+
 
 
         function moveMouseBit() {
@@ -220,6 +267,9 @@
             var dx2 = drgnSg[1].position.x - drgnSg[0].position.x;
             var dy2 = drgnSg[1].position.y - drgnSg[0].position.y;
 
+            var directionn = new Point(dx2, dy2);
+            moveWhisker(whisker1, mousePos, directionn);
+
             var angle = ((Math.atan2(dy2, dx2) * 180) / Math.PI);
 
             targetHeadRot = angle;
@@ -230,7 +280,6 @@
 
              head.position = mousePos;
              head.rotation = angle;
-
 
              var drgSegArrayLength = drgnSg.length-1;
 
@@ -301,8 +350,14 @@
         myCircle.position = view.center;
         myCircle.fillColor = 'white';
 
+
+        function onMouseMove(event) {
+            target = event.point;
+        }
+
         function onFrame(event) {
             moveMouseBit();
+            // moveWhisker(whisker1, target);
 
             for (var i = 0; i < numSegs; i++) {
                 dragonSegCollide(i, view.center);
