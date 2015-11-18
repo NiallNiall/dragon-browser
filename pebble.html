@@ -81,19 +81,41 @@
         });
 
 
+        var viewWidth = view.size.width;
+        var viewHeight = view.size.height;
+        // console.log(viewWidth);
+
         var cogS = [];
         // var numCogs = 15;
-        var cogWidth = 20;
-        var cogHeight = 5;
+        var cogWamt = 10;
+        var cogWinc = viewWidth / cogWamt;
+
+        var cogHamt = 5;
+        var cogHinc = viewHeight / cogHamt;
+
         var numCogs = 0;
 
-        for (var i = 0; i < cogWidth; i++) {
-            for (var j = 0; j < cogHeight; j++) {
-                var position = new Point(i * 100,j * 200);
+        for (var i = 100; i < viewWidth; i+= cogWinc) {
+            for (var j = 100; j < viewHeight; j+= cogHinc) {
+                var position = new Point(i,j);
                 cogS.push(new dragSegment(position));
                 numCogs += 1;
             }
         }
+
+        var connectSeg = [];
+
+        for (var i = 0; i < numCogs; i++) {
+            var connectPoint = cogS[i].position;
+            connectSeg.push(new Point(connectPoint));
+        }
+
+        // console.log(connectSeg);
+        var connectPath = new Path(connectSeg);
+        connectPath.strokeColor = 'white';
+        connectPath.strokeWidth = 2;
+        connectPath.strokeCap = 'round';
+        connectPath.strokeJoin = 'round';
 
         function onFrame(event) {
             for (var i = 0; i < numCogs; i++) {
@@ -104,6 +126,8 @@
         function onMouseMove(event) {
             for (var i = 0; i < numCogs; i++) {
                     cogS[i].moveLine(event.point);
+                    var circ2Pos = cogS[i].circle2.position;
+                    connectPath.segments[i].point = circ2Pos;
             }
         }
 
